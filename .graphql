@@ -1,0 +1,63 @@
+directive @cacheControl(
+    maxAge: Int
+    scope: CacheControlScope
+) on FIELD_DEFINITION | OBJECT | INTERFACE
+enum CacheControlScope {
+    PUBLIC
+    PRIVATE
+}
+
+type LoginResponse {
+    token: String
+    user: User
+}
+
+type Movie {
+    id: ID!
+    name: String!
+    releaseDate: String!
+    duration: Int!
+    actors: [String!]!
+    username: String!
+    averageNote: Int!
+    ratings: [Rating]
+}
+
+input MovieInput {
+    name: String!
+    releaseDate: String!
+    duration: Int!
+    actors: [String!]!
+}
+
+type Mutation {
+    register(username: String!, password: String!): User!
+    login(username: String!, password: String!): LoginResponse!
+    addMovie(input: MovieInput): Movie
+    rateMovie(movieId: String!, note: Int!, comment: String): Movie
+    removeMovie(movieId: String!): Boolean
+}
+
+type Query {
+    currentUser: User!
+    getAllMovies: [Movie!]!
+    getMovie(movieId: String!): Movie
+}
+
+type Rating {
+    username: String!
+    note: Int!
+    comment: String
+}
+
+type Subscription {
+    ratingAdded(movieId: String!): Rating
+}
+
+scalar Upload
+
+type User {
+    id: ID!
+    username: String!
+}
+
