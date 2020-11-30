@@ -1,6 +1,6 @@
 import gql from "graphql-tag";
 import {FetchResult, MutationResult, useMutation} from "@apollo/client";
-import {MovieInfo} from "../apiSchema";
+import {MovieInfo} from "../../apiSchema";
 
 export const addMovieMutationGQL = gql`
     mutation addMovie($input: AddMovieInput!) {

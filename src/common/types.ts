@@ -3,7 +3,7 @@ export interface DisplayRow {
     name: string;
     releaseDate: Date;
     duration: string;
-    actors: string;
+    actors: string[];
     username: string;
     averageNote: number;
 }

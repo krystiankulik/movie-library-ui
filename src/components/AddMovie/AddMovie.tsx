@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import styles from './AddMovie.module.sass'
 import {Button} from "@material-ui/core";
-import {useAddMovieMutation} from "../../hooks/useAddMovieMutation";
+import {useAddMovieMutation} from "../../hooks/mutations/useAddMovieMutation";
 import {useHistory} from "react-router-dom";
 import {DurationInput} from "../Input/DurationInput/DurationInput";
 import {ActorsInput} from "../Input/ActorsInput/ActorsInput";

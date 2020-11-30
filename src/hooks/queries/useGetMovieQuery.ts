@@ -1,5 +1,5 @@
 import {gql, useQuery} from "@apollo/client";
-import {MovieInfo} from "../apiSchema";
+import {MovieInfo} from "../../apiSchema";
 
 const GET_ITEM = gql`
     query GetMovie($movieId: String!) {

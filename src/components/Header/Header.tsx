@@ -1,6 +1,6 @@
 import React from "react";
 import {AppBar, Button, createStyles, makeStyles, Theme, Toolbar, Typography} from "@material-ui/core";
-import {useCurrentUserQuery} from "../../hooks/useCurrentUserQuery";
+import {useCurrentUserQuery} from "../../hooks/queries/useCurrentUserQuery";
 import {useHistory} from "react-router-dom";
 import {useLogout} from "../../hooks/useLogOut";
 import styles from "./Header.module.sass"

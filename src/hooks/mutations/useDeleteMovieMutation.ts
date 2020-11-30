@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 import {FetchResult, MutationResult, useMutation} from "@apollo/client";
-import {MovieInfo} from "../apiSchema";
-import {GET_ALL_ITEMS} from "./useGetAllMoviesQuery";
+import {MovieInfo} from "../../apiSchema";
+import {GET_ALL_ITEMS} from "../queries/useGetAllMoviesQuery";
 
 export const removeMovieMutationGQL = gql`
     mutation removeMovie($movieId: String!) {
@@ -17,13 +17,12 @@ interface MovieDeletionInfo {
 
 export const useDeleteMovieMutation = (): [(movieId: string) => Promise<FetchResult<any>>, MutationResult] => {
 
-    const [mutation, mutationResults] = useMutation<{ removeMovie: MovieDeletionInfo }, {movieId: string}>(removeMovieMutationGQL, {
+    const [mutation, mutationResults] = useMutation<{ removeMovie: MovieDeletionInfo }, { movieId: string }>(removeMovieMutationGQL, {
         update(cache, mutationResult) {
-            const data: {getAllMovies: MovieInfo[]} | null = cache.readQuery({
+            const data: { getAllMovies: MovieInfo[] } | null = cache.readQuery({
                 query: GET_ALL_ITEMS
             });
             const filteredMovies = (data?.getAllMovies ?? []).filter(movie => movie.id !== mutationResult.data?.removeMovie.id);
-            console.log(data);
             cache.modify({
                 fields: {
                     getAllMovies(existingMovies: MovieInfo[] = []) {

@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 import {FetchResult, MutationResult, useMutation} from "@apollo/client";
-import {useAuthToken} from "./useAuthToken";
-import {UserInfo} from "../apiSchema";
+import {useAuthToken} from "../useAuthToken";
+import {UserInfo} from "../../apiSchema";
 
 export const loginMutationGQL = gql`
     mutation login($username: String!, $password: String!) {

@@ -6,8 +6,8 @@ import {DurationInput} from "../Input/DurationInput/DurationInput";
 import {ActorsInput} from "../Input/ActorsInput/ActorsInput";
 import {ReleaseDateInput} from "../Input/ReleaseDateInput";
 import {MovieNameInput} from "../Input/MovieNameInput";
-import {useEditMovieMutation} from "../../hooks/useEditMovieMutation";
-import {useGetMovieQuery} from "../../hooks/useGetMovieQuery";
+import {useEditMovieMutation} from "../../hooks/mutations/useEditMovieMutation";
+import {useGetMovieQuery} from "../../hooks/queries/useGetMovieQuery";
 
 
 type Props = {

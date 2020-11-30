@@ -3,7 +3,7 @@ import {ChangeEvent} from "react";
 import styles from './SignIn.module.sass'
 import {Button, TextField} from "@material-ui/core";
 import {Link, useHistory} from "react-router-dom";
-import {useSignInMutation} from "../../hooks/useSignInMutation";
+import {useSignInMutation} from "../../hooks/mutations/useSignInMutation";
 
 
 const SignIn = () => {

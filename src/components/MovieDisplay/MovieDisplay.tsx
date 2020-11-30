@@ -1,4 +1,4 @@
-import {useGetMovieQuery} from "../../hooks/useGetMovieQuery";
+import {useGetMovieQuery} from "../../hooks/queries/useGetMovieQuery";
 import NotFound from "../NotFound/NotFound";
 import React, {useEffect, useState} from "react";
 import styles from "./MovieDisplay.module.sass";
@@ -7,10 +7,10 @@ import {RatingStarsView} from "../RatingStars/RatingStarsView";
 import {RatingInfo} from "../../apiSchema";
 import {Button, TextField} from "@material-ui/core";
 import {Rating} from "@material-ui/lab";
-import {useRateMovieMutation} from "../../hooks/useRateMovieMutation";
-import {useCurrentUserQuery} from "../../hooks/useCurrentUserQuery";
+import {useRateMovieMutation} from "../../hooks/mutations/useRateMovieMutation";
+import {useCurrentUserQuery} from "../../hooks/queries/useCurrentUserQuery";
 import {useHistory} from "react-router-dom";
-import {useDeleteMovieMutation} from "../../hooks/useDeleteMovieMutation";
+import {useDeleteMovieMutation} from "../../hooks/mutations/useDeleteMovieMutation";
 
 type Props = {
     selectedMovieId: string;
@@ -129,7 +129,7 @@ const MovieDisplay = (props: Props) => {
                     <div>Duration</div>
                     <div>{movieDisplayable?.duration}</div>
                     <div>Actors</div>
-                    <div>{movieDisplayable?.actors}</div>
+                    <div>{movieDisplayable?.actors.join(", ")}</div>
                     <div>Created by</div>
                     <div>{movieDisplayable?.username}</div>
                     <div>Average Note</div>

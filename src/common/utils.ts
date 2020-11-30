@@ -10,7 +10,7 @@ const mapMovieToDisplayRow = (movie: MovieInfo): DisplayRow => ({
     name: movie.name,
     releaseDate: new Date(movie.releaseDate),
     duration: getDurationString(movie.duration),
-    actors: movie.actors.join(", "),
+    actors: movie.actors,
     username: movie.username,
     averageNote: movie.averageNote,
 });

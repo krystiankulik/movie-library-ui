@@ -3,8 +3,8 @@ import {ChangeEvent} from "react";
 import styles from './Register.module.sass'
 import {Button, TextField} from "@material-ui/core";
 import {Link, useHistory} from "react-router-dom";
-import {useRegisterMutation} from "../../hooks/useRegisterMutation";
-import {useSignInMutation} from "../../hooks/useSignInMutation";
+import {useRegisterMutation} from "../../hooks/mutations/useRegisterMutation";
+import {useSignInMutation} from "../../hooks/mutations/useSignInMutation";
 
 
 const Register = () => {
