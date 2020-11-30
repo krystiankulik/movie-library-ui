@@ -4,6 +4,7 @@ import {useCurrentUserQuery} from "../../hooks/useCurrentUserQuery";
 import {useHistory} from "react-router-dom";
 import {useLogout} from "../../hooks/useLogOut";
 import styles from "./Header.module.sass"
+import HomeIcon from '@material-ui/icons/Home';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -25,10 +26,9 @@ const Header = () => {
     const logout = useLogout();
     const history = useHistory();
 
+    const goToHomeView = () => history.push("/");
     const goToSignInView = () => history.push("/sign-in");
-
     const goToRegisterView = () => history.push("/register");
-
     const goToAddMovieView = () => history.push("/add-movie")
 
     const renderUserName = () => currentUser.data ? (
@@ -68,6 +68,9 @@ const Header = () => {
     return (
         <AppBar position="static" className={classes.header}>
             <Toolbar>
+                <div className={styles.homeButton}>
+                    <HomeIcon onClick={goToHomeView}/>
+                </div>
                 <div className={classes.space}/>
                 {renderUserName()}
                 {renderSignInButton()}

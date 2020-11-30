@@ -32,7 +32,11 @@ const SignIn = () => {
                     <TextField id="username" label="Username" value={username} onChange={handleUsernameChange}/>
                 </div>
                 <div className={styles.formItem}>
-                    <TextField id="password" label="Password" value={password} onChange={handlePasswordChange}/>
+                    <TextField id="password"
+                               label="Password"
+                               type="password"
+                               value={password}
+                               onChange={handlePasswordChange}/>
                 </div>
                 <div className={styles.formItem}>
                     <Button variant="outlined" color="primary" onClick={submitSignIn}>
