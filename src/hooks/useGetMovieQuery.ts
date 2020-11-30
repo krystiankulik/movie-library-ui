@@ -1,7 +1,7 @@
-import {gql, QueryResult, useQuery} from "@apollo/client";
+import {gql, useQuery} from "@apollo/client";
 import {MovieInfo} from "../apiSchema";
 
-const GET_ITEMS = gql`
+const GET_ITEM = gql`
     query GetMovie($movieId: String!) {
         getMovie(movieId: $movieId) {
             id,
@@ -9,6 +9,7 @@ const GET_ITEMS = gql`
             releaseDate,
             duration,
             actors,
+            username,
             averageNote,
             ratings {
                 username,
@@ -34,8 +35,8 @@ export interface GetMovieResponse {
 }
 
 
-export const useGetMovieQuery = (movieId: string): [boolean, GetMovieResponse | undefined, () => void] => {
-    const {loading, data, error, subscribeToMore} = useQuery(GET_ITEMS, {
+export const useGetMovieQuery = (movieId: string): [boolean, GetMovieResponse | undefined, any] => {
+    const {loading, data, error, subscribeToMore} = useQuery(GET_ITEM, {
         variables: {
             movieId: movieId
         }
@@ -46,24 +47,17 @@ export const useGetMovieQuery = (movieId: string): [boolean, GetMovieResponse | 
             document: RATINGS_SUBSCRIPTION,
             variables: {movieId: movieId},
             updateQuery: (prev, {subscriptionData}) => {
-                console.log(JSON.stringify(subscriptionData))
-                console.log(JSON.stringify(prev))
                 if (!subscriptionData.data) return prev;
                 const newRatingItem = subscriptionData.data.ratingAdded;
-                const result =  {
+                return {
                     getMovie: {
-                        ...prev.getMovie, ratings: [...(prev?.getMovie?.ratings || []), {
-                            username: newRatingItem.username,
-                            note: newRatingItem.note,
-                            comment: newRatingItem.comment
-                        }]
+                        ...prev.getMovie,
+                        averageNote: newRatingItem.averageNote,
+                        ratings: [...(prev?.getMovie?.ratings || []), {...newRatingItem}]
                     }
-                }
-
-                console.log(result)
-                return result;
+                };
             }
-        })
+        });
 
     return [loading, data, subscribeToNewRatings];
 }

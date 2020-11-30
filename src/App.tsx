@@ -11,6 +11,7 @@ import Header from "./components/Header/Header";
 import AddMovie from "./components/AddMovie/AddMovie";
 import {RouteComponentProps} from "react-router";
 import MovieDisplay from "./components/MovieDisplay/MovieDisplay";
+import {EditMovie} from "./components/EditMovie/EditMovie";
 
 
 const App = () => {
@@ -18,6 +19,10 @@ const App = () => {
 
     const renderSelectedMovie = (routerProps: RouteComponentProps<any>) => {
         return <MovieDisplay selectedMovieId={routerProps.match.params.movieId}/>
+    }
+
+    const renderMovieEdition = (routerProps: RouteComponentProps<any>) => {
+        return <EditMovie selectedMovieId={routerProps.match.params.movieId}/>
     }
 
     return (
@@ -32,6 +37,9 @@ const App = () => {
                         <Route exact path="/add-movie" component={AddMovie}/>
                         <Route path="/movies/:movieId" render={(routerProps) =>
                             renderSelectedMovie(routerProps)
+                        }/>
+                        <Route path="/edit-movie/:movieId" render={(routerProps) =>
+                            renderMovieEdition(routerProps)
                         }/>
                         <Route path="*" component={NotFound}/>
                     </Switch>

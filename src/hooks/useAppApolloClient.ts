@@ -38,7 +38,19 @@ const authMiddleware = (authToken: string) =>
         return forward(operation);
     });
 
-const cache = new InMemoryCache({});
+const cache = new InMemoryCache({
+    typePolicies: {
+        Movie: {
+            fields: {
+                actors: {
+                    merge(existing, incoming) {
+                        return incoming
+                    }
+                }
+            }
+        }
+    }
+});
 
 export const useAppApolloClient = (): ApolloClient<NormalizedCacheObject> => {
     const [authToken] = useAuthToken();

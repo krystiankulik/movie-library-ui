@@ -1,6 +1,6 @@
-import styles from "../AddMovie/AddMovie.module.sass";
 import {InputLabel, TextField} from "@material-ui/core";
-import React, {ChangeEvent, Dispatch, useState} from "react";
+import React, {ChangeEvent, Dispatch, useEffect, useState} from "react";
+import styles from "./DurationInput.module.sass";
 
 const MINUTES_IN_HOUR = 60;
 
@@ -9,14 +9,19 @@ type Props = {
     setDuration: Dispatch<number>;
 }
 
-const getHours = (value: number) => Math.floor(value / MINUTES_IN_HOUR)
-const getMinutes = (value: number) => value % MINUTES_IN_HOUR
+const getHours = (value: number) => Math.floor(value / MINUTES_IN_HOUR);
+const getMinutes = (value: number) => value % MINUTES_IN_HOUR;
 
 
 export const DurationInput = (props: Props) => {
 
     const [durationHours, setDurationHours] = useState<number>(getHours(props.duration));
-    const [durationMinutes, setDurationMinutes] = useState<number>(getMinutes(30));
+    const [durationMinutes, setDurationMinutes] = useState<number>(getMinutes(props.duration));
+
+    useEffect(() => {
+        setDurationHours(getHours(props.duration));
+        setDurationMinutes(getMinutes(props.duration));
+    }, [props])
 
     const getDurationValue = (): number => durationHours * MINUTES_IN_HOUR + durationMinutes;
 
@@ -32,7 +37,7 @@ export const DurationInput = (props: Props) => {
         const value = Number(event.target.value)
         if (value >= MINUTES_IN_HOUR) {
             setDurationHours(hours => hours + getHours(value));
-            setDurationMinutes(getMinutes(props.duration));
+            setDurationMinutes(getMinutes(value));
             props.setDuration(getDurationValue())
         } else if (value >= 0) {
             setDurationMinutes(value);

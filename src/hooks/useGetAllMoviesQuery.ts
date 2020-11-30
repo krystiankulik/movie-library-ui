@@ -1,7 +1,7 @@
 import {gql, QueryResult, useQuery} from "@apollo/client";
 import {MovieInfo} from "../apiSchema";
 
-const GET_ALL_ITEMS = gql`
+export const GET_ALL_ITEMS = gql`
     query GetAllMovies {
         getAllMovies {
             id,

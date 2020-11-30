@@ -2,9 +2,24 @@ directive @cacheControl(
     maxAge: Int
     scope: CacheControlScope
 ) on FIELD_DEFINITION | OBJECT | INTERFACE
+input AddMovieInput {
+    name: String!
+    releaseDate: String!
+    duration: Int!
+    actors: [String!]!
+}
+
 enum CacheControlScope {
     PUBLIC
     PRIVATE
+}
+
+input EditMovieInput {
+    movieId: String!
+    name: String!
+    releaseDate: String!
+    duration: Int!
+    actors: [String!]!
 }
 
 type LoginResponse {
@@ -19,23 +34,21 @@ type Movie {
     duration: Int!
     actors: [String!]!
     username: String!
-    averageNote: Int!
+    averageNote: Float!
     ratings: [Rating]
 }
 
-input MovieInput {
-    name: String!
-    releaseDate: String!
-    duration: Int!
-    actors: [String!]!
+type MovieDeletion {
+    id: String
 }
 
 type Mutation {
     register(username: String!, password: String!): User!
     login(username: String!, password: String!): LoginResponse!
-    addMovie(input: MovieInput): Movie
+    addMovie(input: AddMovieInput): Movie
     rateMovie(movieId: String!, note: Int!, comment: String): Movie
-    removeMovie(movieId: String!): Boolean
+    removeMovie(movieId: String!): MovieDeletion
+    editMovie(input: EditMovieInput): Movie
 }
 
 type Query {

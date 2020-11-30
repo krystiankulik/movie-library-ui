@@ -4,5 +4,6 @@ export interface DisplayRow {
     releaseDate: Date;
     duration: string;
     actors: string;
+    username: string;
     averageNote: number;
 }
