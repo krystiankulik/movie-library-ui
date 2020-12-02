@@ -3,10 +3,10 @@ import {useAuthToken} from "./useAuthToken";
 import {WebSocketLink} from "@apollo/client/link/ws";
 import {getMainDefinition} from "@apollo/client/utilities";
 
-const httpLink = new HttpLink({uri: 'http://localhost:3000/v1/graphql'});
+const httpLink = new HttpLink({uri: 'http://localhost:3001/v1/graphql'});
 
 const wsLink = (authToken: string) => new WebSocketLink({
-    uri: 'ws://localhost:3000/graphql',
+    uri: 'ws://localhost:3001/graphql',
     options: {
         reconnect: true
     },
