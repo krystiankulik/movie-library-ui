@@ -14,8 +14,6 @@ import MovieDisplay from "./components/MovieDisplay/MovieDisplay";
 import {EditMovie} from "./components/MovieInput/EditMovie";
 import styles from "./App.module.sass";
 
-// Adding repository name at the URL beginning to satisfy Github Pages.
-const URL_PREFIX = "/movie-library-ui";
 const App = () => {
     const client = useAppApolloClient();
 
@@ -29,18 +27,18 @@ const App = () => {
 
     return (
         <ApolloProvider client={client}>
-            <BrowserRouter>
+            <BrowserRouter basename={process.env.PUBLIC_URL}>
                 <div className={styles.appContainer}>
                     <Header/>
                     <Switch>
-                        <Route exact path={`${URL_PREFIX}/movie-library-ui/`} component={MainDashboard}/>
-                        <Route exact path={`${URL_PREFIX}/sign-in"`} component={SignIn}/>
-                        <Route exact path={`${URL_PREFIX}/register`} component={Register}/>
-                        <Route exact path={`${URL_PREFIX}/add-movie`} component={AddMovie}/>
-                        <Route path={`${URL_PREFIX}/movies/:movieId`} render={(routerProps) =>
+                        <Route exact path="/" component={MainDashboard}/>
+                        <Route exact path="/sign-in" component={SignIn}/>
+                        <Route exact path="/register" component={Register}/>
+                        <Route exact path="/add-movie" component={AddMovie}/>
+                        <Route path="/movies/:movieId" render={(routerProps) =>
                             renderSelectedMovie(routerProps)
                         }/>
-                        <Route path={`${URL_PREFIX}/edit-movie/:movieId`} render={(routerProps) =>
+                        <Route path="/edit-movie/:movieId" render={(routerProps) =>
                             renderMovieEdition(routerProps)
                         }/>
                         <Route path="*" render={() => <ClientFaultPage text="404 Not Found"/>}/>
