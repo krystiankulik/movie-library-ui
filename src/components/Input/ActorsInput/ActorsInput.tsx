@@ -1,6 +1,6 @@
 import {Chip, Fab, InputLabel, TextField, Tooltip} from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
-import React, {ChangeEvent, Dispatch, SetStateAction, useState} from "react";
+import React, {ChangeEvent, Dispatch, memo, SetStateAction, useState} from "react";
 import styles from "./ActorsInput.module.sass";
 
 type Props = {
@@ -8,7 +8,7 @@ type Props = {
     setActors: Dispatch<SetStateAction<string[]>>;
 }
 
-export const ActorsInput = (props: Props) => {
+export const ActorsInput = memo((props: Props) => {
     const [newActor, setNewActor] = useState<string>('');
 
     const deleteActor = (actorToDelete: string) => {
@@ -20,21 +20,30 @@ export const ActorsInput = (props: Props) => {
     };
 
     const addNewActor = () => {
-        props.setActors(actors => actors.concat(newActor));
-        setNewActor('');
+        if (newActor.length > 0) {
+            if (!props.actors.includes(newActor)) {
+                props.setActors(actors => actors.concat(newActor));
+            }
+            setNewActor('');
+        }
     }
 
     const renderActors = () => props.actors.map(actor =>
-        <Chip
-            label={actor}
-            onDelete={() => deleteActor(actor)}
-        />
+        <div className={styles.chipWrapper} key={actor}>
+            <Chip
+                label={actor}
+                onDelete={() => deleteActor(actor)}
+            />
+        </div>
     );
 
     return (
         <>
             <div>
                 <InputLabel>Actors</InputLabel>
+            </div>
+            <div className={styles.chipContainer}>
+                {renderActors()}
             </div>
             <div>
                 <TextField
@@ -53,7 +62,6 @@ export const ActorsInput = (props: Props) => {
                     </Tooltip>
                 </div>
             </div>
-            {renderActors()}
         </>
     );
-};
+});

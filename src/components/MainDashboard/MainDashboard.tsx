@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {
     ColDef,
-    ColParams,
     DataGrid,
     SortDirection,
     SortModel,
@@ -16,6 +15,7 @@ import {useCurrentUserQuery} from "../../hooks/queries/useCurrentUserQuery";
 import {utils} from "../../common/utils";
 import {RatingStarsView} from "../RatingStars/RatingStarsView";
 import {useSorting} from "../../hooks/useSorting";
+import dayjs from "dayjs";
 
 
 const columns: ColDef[] = [
@@ -29,7 +29,7 @@ const columns: ColDef[] = [
         headerName: 'Release Date',
         width: 150,
         type: 'date',
-        valueFormatter: params => (params.value as Date).toLocaleDateString("en-US")
+        valueFormatter: params => utils.formatDate(dayjs(params.value as string))
     },
     {
         field: 'duration',
@@ -42,7 +42,12 @@ const columns: ColDef[] = [
         headerName: 'Actors',
         sortable: false,
         width: 150,
-        valueFormatter: (params) => (params.value as string[]).join(", ")
+        cellClassName: 'actorsCellStyle',
+        renderCell: (params) => (
+            <div className={styles.actorsCell}>
+                {(params.value as string[]).join(", ")}
+            </div>
+        )
     },
     {
         field: 'averageNote',
@@ -57,17 +62,18 @@ const columns: ColDef[] = [
 const makeColumnsResponsive = (columns: ColDef[], bigScreen: boolean): ColDef[] => bigScreen ? columns.map(column => ({
     ...column,
     flex: 1,
-    cellClassName: 'cellStyle',
+    cellClassName: 'cellStyle'
 })) : columns;
-
 
 const useStyles = makeStyles({
     root: {
+        backgroundColor: "white",
         '& .cellStyle': {
-            cursor: "pointer",
-            lineHeight: "1.5rem !important",
-            overflow: "auto",
-            whiteSpace: "pre-wrap"
+            cursor: "pointer"
+        },
+        '& .actorsCellStyle': {
+            whiteSpace: "pre-wrap",
+            overflow: "auto"
         }
     }
 });
@@ -75,24 +81,23 @@ const useStyles = makeStyles({
 const MainDashboard = () => {
     const classes = useStyles();
     const {data, error} = useGetAllMoviesQuery();
-    const bigScreen = useMediaQuery('(min-width:48rem)');
+    const bigScreen = useMediaQuery('(min-width:60rem)');
     const currentUser = useCurrentUserQuery();
     const history = useHistory();
     const [column, direction, setSorting, removeSorting] = useSorting();
-
     const [sortModel, setSortModel] = useState<SortModel>([]);
 
     useEffect(() => {
         if (column && direction) {
             setSortModel([{field: column as string, sort: direction as SortDirection}])
         }
-    }, [])
+    }, [column, direction])
 
     const handleSortModelChange = (params: SortModelParams) => {
         if (params.sortModel !== sortModel) {
             setSortModel(params.sortModel);
             const newSortModel = params.sortModel[0];
-            if (!newSortModel.sort) {
+            if (!newSortModel?.sort) {
                 removeSorting();
             } else {
                 setSorting(newSortModel.field, newSortModel.sort)
@@ -117,8 +122,9 @@ const MainDashboard = () => {
     return (
         <div className={styles.dashboardContainer}>
             <h1>Movie Library</h1>
-            {renderSignInHint()}
-
+            <div>
+                {renderSignInHint()}
+            </div>
             <div className={styles.dataGridContainer}>
                 <DataGrid rows={(data?.getAllMovies ?? []).map(movie => utils.mapMovieToDisplayRow(movie))}
                           columns={makeColumnsResponsive(columns, bigScreen)}
@@ -127,6 +133,7 @@ const MainDashboard = () => {
                           className={classes.root}
                           sortModel={sortModel}
                           onSortModelChange={handleSortModelChange}
+                          rowHeight={80}
                 />
             </div>
         </div>

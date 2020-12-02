@@ -5,6 +5,7 @@ export const rateMovieMutationGQL = gql`
     mutation addMovie($movieId: String! $note: Int!, $comment: String) {
         rateMovie(movieId: $movieId, note: $note, comment: $comment) {
             id,
+            averageNote,
             ratings {
                 username,
                 note,

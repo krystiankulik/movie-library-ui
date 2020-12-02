@@ -36,7 +36,7 @@ export interface GetMovieResponse {
 
 
 export const useGetMovieQuery = (movieId: string): [boolean, GetMovieResponse | undefined, any] => {
-    const {loading, data, error, subscribeToMore} = useQuery(GET_ITEM, {
+    const {loading, data, subscribeToMore} = useQuery(GET_ITEM, {
         variables: {
             movieId: movieId
         }

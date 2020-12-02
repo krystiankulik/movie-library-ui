@@ -3,15 +3,16 @@ import './App.module.sass';
 import {ApolloProvider} from "@apollo/client";
 import MainDashboard from "./components/MainDashboard/MainDashboard";
 import {BrowserRouter, Route, Switch} from 'react-router-dom';
-import SignIn from "./components/SignIn/SignIn";
-import Register from "./components/Register/Register";
-import NotFound from "./components/NotFound/NotFound";
+import {SignIn} from "./components/UserManagament/SignIn";
+import Register from "./components/UserManagament/Register";
+import ClientFaultPage from "./components/ClientFaultPage/ClientFaultPage";
 import {useAppApolloClient} from "./hooks/useAppApolloClient";
 import Header from "./components/Header/Header";
-import AddMovie from "./components/AddMovie/AddMovie";
+import AddMovie from "./components/MovieInput/AddMovie";
 import {RouteComponentProps} from "react-router";
 import MovieDisplay from "./components/MovieDisplay/MovieDisplay";
-import {EditMovie} from "./components/EditMovie/EditMovie";
+import {EditMovie} from "./components/MovieInput/EditMovie";
+import styles from "./App.module.sass";
 
 
 const App = () => {
@@ -28,7 +29,7 @@ const App = () => {
     return (
         <ApolloProvider client={client}>
             <BrowserRouter>
-                <div className="App">
+                <div className={styles.appContainer}>
                     <Header/>
                     <Switch>
                         <Route exact path="/" component={MainDashboard}/>
@@ -41,7 +42,7 @@ const App = () => {
                         <Route path="/edit-movie/:movieId" render={(routerProps) =>
                             renderMovieEdition(routerProps)
                         }/>
-                        <Route path="*" component={NotFound}/>
+                        <Route path="*" render={() => <ClientFaultPage text="404 Not Found"/> }/>
                     </Switch>
                 </div>
             </BrowserRouter>

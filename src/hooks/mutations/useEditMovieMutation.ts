@@ -1,6 +1,8 @@
 import gql from "graphql-tag";
 import {FetchResult, MutationResult, useMutation} from "@apollo/client";
 import {MovieInfo} from "../../apiSchema";
+import {Dayjs} from "dayjs";
+import {utils} from "../../common/utils";
 
 export const editMovieMutationGQL = gql`
     mutation editMovie($input: EditMovieInput!) {
@@ -29,18 +31,18 @@ interface EditMovieInput {
     actors: string[];
 }
 
-export const useEditMovieMutation = (): [(movieId: string, name: string, releaseDate: string, duration: number, actors: string[])
+export const useEditMovieMutation = (): [(movieId: string, name: string, releaseDate: Dayjs, duration: number, actors: string[])
     => Promise<FetchResult>, MutationResult] => {
 
     const [mutation, mutationResults] = useMutation<{ editMovie: MovieInfo }, { input: EditMovieInput }>(editMovieMutationGQL);
 
-    const editMovie = (movieId: string, name: string, releaseDate: string, duration: number, actors: string[]) => {
+    const editMovie = (movieId: string, name: string, releaseDate: Dayjs, duration: number, actors: string[]) => {
         return mutation({
             variables: {
                 input: {
                     movieId,
                     name,
-                    releaseDate,
+                    releaseDate:  utils.formatDate(releaseDate),
                     duration,
                     actors
                 }

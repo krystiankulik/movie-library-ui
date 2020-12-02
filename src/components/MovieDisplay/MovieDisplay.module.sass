@@ -1,23 +1,57 @@
 .mainContainer
-  padding: 1rem
-  margin: auto
+  display: flex
+  flex-direction: column
+  align-items: center
+  padding: 2rem
+  border-radius: 2rem
+  margin: 1rem auto
+  background-color: white
 
   .detailsContainer
     display: flex
+    flex-direction: column-reverse
+
+    .actionButtons
+      display: flex
+      justify-content: center
+      margin-bottom: 2rem
 
     .actionButton
       margin: 1rem
 
     .detailsInfoContainer
+      margin: 1rem 1rem 1rem 4rem
       display: grid
-      grid-template-columns: 10rem 20rem
+      grid-gap: 1rem
+      grid-template-columns: 1fr 2fr
       grid-template-rows: repeat(6, 1fr)
-      justify-content: start
+      justify-items: center
 
+  .inputFormItem
+    margin: 1rem
 
-.inputFormItem
-  margin: 1rem 0
+  .comments
+    margin: 0 1rem 3rem 1rem
+
+  .rateInput
+    padding: 1rem
+
 
 @media (min-width: 40rem)
   .mainContainer
     width: 70%
+    align-items: flex-start
+
+    .detailsContainer
+      flex-direction: row
+      justify-items: flex-start
+
+      .actionButtons
+        display: flex
+        flex-direction: column
+        justify-content: flex-start
+
+      .detailsInfoContainer
+        grid-template-columns: 10rem 20rem
+        justify-items: start
+        margin: 1rem 0

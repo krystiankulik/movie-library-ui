@@ -1,5 +1,5 @@
 import {useGetMovieQuery} from "../../hooks/queries/useGetMovieQuery";
-import NotFound from "../NotFound/NotFound";
+import ClientFaultPage from "../ClientFaultPage/ClientFaultPage";
 import React, {useEffect, useState} from "react";
 import styles from "./MovieDisplay.module.sass";
 import {utils} from "../../common/utils";
@@ -11,6 +11,7 @@ import {useRateMovieMutation} from "../../hooks/mutations/useRateMovieMutation";
 import {useCurrentUserQuery} from "../../hooks/queries/useCurrentUserQuery";
 import {useHistory} from "react-router-dom";
 import {useDeleteMovieMutation} from "../../hooks/mutations/useDeleteMovieMutation";
+import dayjs from "dayjs";
 
 type Props = {
     selectedMovieId: string;
@@ -27,10 +28,10 @@ const MovieDisplay = (props: Props) => {
     useEffect(() => {
         const unsubscribe = subscribeToNewRatings();
         return () => unsubscribe();
-    }, []);
+    }, [currentUser]);
 
     if (!data?.getMovie && !loading) {
-        return <NotFound/>
+        return <ClientFaultPage text="404 Not found"/>
     }
 
     const movieDisplayable = data?.getMovie ? utils.mapMovieToDisplayRow(data?.getMovie) : null;
@@ -44,11 +45,11 @@ const MovieDisplay = (props: Props) => {
                 <RatingStarsView value={ratingInfo.note}/>
             </div>
             <div>{ratingInfo.comment}</div>
-            <hr/>
         </div>
 
     const rateMovieSubmit = () => {
-        rateMovie(movieDisplayable?.id ?? '', Number(note), comment);
+        rateMovie(movieDisplayable?.id ?? '', Number(note), comment)
+            .catch(error => console.error(error.message));
     }
 
     const editMovie = () => {
@@ -56,8 +57,10 @@ const MovieDisplay = (props: Props) => {
     }
 
     const handleMovieDelete = () => {
-        deleteMovie(movieDisplayable?.id ?? '');
-        history.push("/");
+        deleteMovie(movieDisplayable?.id ?? '')
+            .then(() => history.push("/"))
+            .catch(error => console.error(error.message));
+
     }
 
 
@@ -65,12 +68,12 @@ const MovieDisplay = (props: Props) => {
         const movieAlreadyRated = (data?.getMovie?.ratings ?? [])
             .filter(rating => rating.username === currentUser.data?.currentUser.username).length > 0
 
-        if (movieAlreadyRated) {
+        if (movieAlreadyRated || !currentUser.data) {
             return null;
         }
 
         return (
-            <div>
+            <div className={styles.rateInput}>
                 <h5>Add your rating:</h5>
                 <div className={styles.inputFormItem}>
                     <Rating
@@ -93,60 +96,61 @@ const MovieDisplay = (props: Props) => {
                     />
                 </div>
                 <div>
-                    <Button variant="outlined" color="primary" size="small" onClick={rateMovieSubmit}>
+                    <Button variant="outlined" color="primary" size="medium" onClick={rateMovieSubmit}>
                         Rate
                     </Button>
                 </div>
-                <hr/>
             </div>
         );
     }
 
     const renderEditButton = () => (
-        <div className={styles.actionButton}>
-            <Button variant="outlined" color="default" size="small" onClick={editMovie}>
-                Edit
-            </Button>
-        </div>
+        currentUser.data ? (
+            <div className={styles.actionButton}>
+                <Button variant="outlined" color="default" size="small" onClick={editMovie}>
+                    Edit
+                </Button>
+            </div>) : null
     );
-    const renderDeleteButton = () => (
-        <div className={styles.actionButton}>
-            <Button variant="outlined" color="secondary" size="small" onClick={handleMovieDelete}>
-                Delete
-            </Button>
-        </div>
-    );
+    const renderDeleteButton = () =>
+        currentUser.data ? (
+            <div className={styles.actionButton}>
+                <Button variant="outlined" color="secondary" size="small" onClick={handleMovieDelete}>
+                    Delete
+                </Button>
+            </div>) : null;
+
 
     return (
         <div className={styles.mainContainer}>
             <h2>Movie Details</h2>
             <div className={styles.detailsContainer}>
                 <div className={styles.detailsInfoContainer}>
-                    <div>Name</div>
+                    <div><b>Name</b></div>
                     <div>{movieDisplayable?.name}</div>
-                    <div>Release Date</div>
-                    <div>{movieDisplayable?.releaseDate.toLocaleDateString("en-US")}</div>
-                    <div>Duration</div>
+                    <div><b>Release Date</b></div>
+                    <div>{movieDisplayable?.releaseDate ? utils.formatDate(dayjs(movieDisplayable?.releaseDate)) : ''}</div>
+                    <div><b>Duration</b></div>
                     <div>{movieDisplayable?.duration}</div>
-                    <div>Actors</div>
+                    <div><b>Actors</b></div>
                     <div>{movieDisplayable?.actors.join(", ")}</div>
-                    <div>Created by</div>
+                    <div><b>Created by</b></div>
                     <div>{movieDisplayable?.username}</div>
-                    <div>Average Note</div>
+                    <div><b>Average Note</b></div>
                     <div>
                         <RatingStarsView value={movieDisplayable?.averageNote ?? 0}/>
                     </div>
                 </div>
-                <div>
+                <div className={styles.actionButtons}>
                     {renderEditButton()}
                     {renderDeleteButton()}
                 </div>
             </div>
             <h3>Comments</h3>
-            <div>
+            {renderRateInput()}
+            <div className={styles.comments}>
                 {(data?.getMovie?.ratings || []).map(rating => renderRating(rating))}
             </div>
-            {renderRateInput()}
         </div>
     );
 }

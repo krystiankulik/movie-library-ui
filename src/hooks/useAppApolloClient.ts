@@ -3,10 +3,10 @@ import {useAuthToken} from "./useAuthToken";
 import {WebSocketLink} from "@apollo/client/link/ws";
 import {getMainDefinition} from "@apollo/client/utilities";
 
-const httpLink = new HttpLink({uri: 'http://localhost:3300/v1/graphql'});
+const httpLink = new HttpLink({uri: 'http://localhost:3000/v1/graphql'});
 
 const wsLink = (authToken: string) => new WebSocketLink({
-    uri: 'ws://localhost:3300/graphql',
+    uri: 'ws://localhost:3000/graphql',
     options: {
         reconnect: true
     },
@@ -15,7 +15,7 @@ const wsLink = (authToken: string) => new WebSocketLink({
     }
 });
 
-const link = (authToken: string) => split(
+const mainLink = (authToken: string) => split(
     ({query}) => {
         const definition = getMainDefinition(query)
         return definition.kind === 'OperationDefinition' && definition.operation === 'subscription'
@@ -55,7 +55,7 @@ const cache = new InMemoryCache({
 export const useAppApolloClient = (): ApolloClient<NormalizedCacheObject> => {
     const [authToken] = useAuthToken();
     return new ApolloClient({
-        link: link(authToken),
+        link: mainLink(authToken),
         cache,
     });
 };

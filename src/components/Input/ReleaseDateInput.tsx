@@ -1,15 +1,17 @@
 import React, {ChangeEvent, Dispatch, SetStateAction} from "react";
 import {TextField} from "@material-ui/core";
+import dayjs, {Dayjs} from "dayjs";
+import {utils} from "../../common/utils";
 
 type Props = {
-    date: string;
-    setDate: Dispatch<SetStateAction<string>>;
+    date: Dayjs;
+    setDate: Dispatch<SetStateAction<Dayjs>>;
 }
 
 export const ReleaseDateInput = (props: Props) => {
 
     const handleDateChange = (event: ChangeEvent<HTMLInputElement>) => {
-        props.setDate(event.target.value);
+        props.setDate(dayjs(event.target.value));
     };
 
     return (
@@ -17,7 +19,7 @@ export const ReleaseDateInput = (props: Props) => {
             id="date"
             label="Release Date"
             type="date"
-            value={props.date}
+            value={utils.formatDate(props.date)}
             onChange={handleDateChange}
             InputLabelProps={{
                 shrink: true,

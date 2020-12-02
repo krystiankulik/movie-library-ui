@@ -1,7 +1,9 @@
+import {Dayjs} from "dayjs";
+
 export interface DisplayRow {
     id: string;
     name: string;
-    releaseDate: Date;
+    releaseDate: Dayjs;
     duration: string;
     actors: string[];
     username: string;

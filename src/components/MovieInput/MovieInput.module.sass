@@ -1,0 +1,39 @@
+.mainContainer
+  .formContainer
+    display: flex
+    flex-direction: column
+    align-items: center
+    background-color: lighten(#7dc7cb, 20%)
+    padding: 1rem
+
+    h1
+      color: #535353
+
+    .formItem
+      margin: 3rem 0
+
+    .actionButtons
+      display: flex
+      flex-direction: column
+      align-items: center
+
+      .actionButton
+        margin: 1rem
+
+@media (min-width: 40rem)
+  .mainContainer
+    margin: 4rem auto
+    width: 30rem
+
+    .formContainer
+      display: block
+      padding: 1rem 2rem
+      border-radius: 10px
+      box-shadow: 5px 5px 5px #666666
+
+      .formItem
+        margin: 3rem
+
+      .actionButtons
+        display: flex
+        flex-direction: row
