@@ -4,7 +4,7 @@ import {WebSocketLink} from "@apollo/client/link/ws";
 import {getMainDefinition} from "@apollo/client/utilities";
 
 
-const BACKEND_SERVICE = "46.101.123.165:3001:3001";
+const BACKEND_SERVICE = "46.101.123.165:3001";
 const httpLink = new HttpLink({uri: `http://${BACKEND_SERVICE}/v1/graphql`});
 
 const wsLink = (authToken: string) => new WebSocketLink({
