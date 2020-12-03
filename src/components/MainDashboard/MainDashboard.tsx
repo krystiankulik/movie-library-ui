@@ -37,6 +37,8 @@ const columns: ColDef[] = [
         headerName: 'Duration',
         type: 'number',
         width: 150,
+        valueFormatter: params => utils.getDurationString(params.value as number)
+
     },
     {
         field: 'actors',
@@ -124,11 +126,10 @@ const MainDashboard = (props: Props) => {
         history.push("/movies/" + movieId);
     }
 
-    const mapMoviesToDisplayRows = () => props.movies.map(movie => utils.mapMovieToDisplayRow(movie));
 
     const getRows = () => props.showMyMovies && props.loggedUser ?
-        mapMoviesToDisplayRows().filter(movieRow => movieRow.username === props.loggedUser)
-        : mapMoviesToDisplayRows();
+        props.movies.filter(movieRow => movieRow.username === props.loggedUser)
+        : props.movies;
 
     return (
         <div className={styles.dashboardContainer}>
@@ -137,7 +138,8 @@ const MainDashboard = (props: Props) => {
                 {renderSignInHint()}
             </div>
             <div className={styles.dataGridContainer}>
-                {props.loggedUser && <MyMoviesToggle showMyMovies={props.showMyMovies} setShowMyMovies={props.setShowMyMovies}/>}
+                {props.loggedUser &&
+                <MyMoviesToggle showMyMovies={props.showMyMovies} setShowMyMovies={props.setShowMyMovies}/>}
                 <DataGrid rows={getRows()}
                           columns={makeColumnsResponsive(columns, bigScreen)}
                           pageSize={10}

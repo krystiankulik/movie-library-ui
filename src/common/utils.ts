@@ -11,16 +11,6 @@ const getDurationString = (minutes: number) => `${Math.floor(minutes / 60)}:${ad
 
 const formatDate = (date: Dayjs) => date.format('YYYY-MM-DD');
 
-const mapMovieToDisplayRow = (movie: MovieInfo): DisplayRow => ({
-    id: movie.id,
-    name: movie.name,
-    releaseDate: dayjs(movie.releaseDate),
-    duration: getDurationString(movie.duration),
-    actors: movie.actors,
-    username: movie.username,
-    averageNote: movie.averageNote,
-});
-
 const handleBasicTextField = (setValue: Dispatch<SetStateAction<string>>) =>
     (event: ChangeEvent<HTMLInputElement>) => {
         const value = event.target.value;
@@ -33,7 +23,6 @@ const handleBasicTextField = (setValue: Dispatch<SetStateAction<string>>) =>
 export const utils = {
     addLeadingZero,
     getDurationString,
-    mapMovieToDisplayRow,
     formatDate,
     handleBasicTextField
 }

@@ -21,8 +21,6 @@ const MovieDisplay = (props: Props) => {
     const [deleteMovie] = useDeleteMovieMutation();
     const history = useHistory();
 
-    const movieDisplayable = utils.mapMovieToDisplayRow(props.selectedMovie);
-
     const renderRating = (ratingInfo: RatingInfo) =>
         <div key={ratingInfo.username}>
             <div>
@@ -35,16 +33,16 @@ const MovieDisplay = (props: Props) => {
         </div>
 
     const rateMovieSubmit = () => {
-        rateMovie(movieDisplayable?.id ?? '', Number(note), comment)
+        rateMovie(props.selectedMovie.id, Number(note), comment)
             .catch(error => console.error(error.message));
     }
 
     const editMovie = () => {
-        history.push("/edit-movie/" + movieDisplayable?.id)
+        history.push("/edit-movie/" + props.selectedMovie.id)
     }
 
     const handleMovieDelete = () => {
-        deleteMovie(movieDisplayable?.id ?? '')
+        deleteMovie(props.selectedMovie.id ?? '')
             .catch(error => console.error(error.message));
         history.push("/");
     }
@@ -113,18 +111,18 @@ const MovieDisplay = (props: Props) => {
             <div className={styles.detailsContainer}>
                 <div className={styles.detailsInfoContainer}>
                     <div><b>Name</b></div>
-                    <div>{movieDisplayable?.name}</div>
+                    <div>{props.selectedMovie.name}</div>
                     <div><b>Release Date</b></div>
-                    <div>{movieDisplayable?.releaseDate ? utils.formatDate(dayjs(movieDisplayable?.releaseDate)) : ''}</div>
+                    <div>{utils.formatDate(dayjs(props.selectedMovie.releaseDate))}</div>
                     <div><b>Duration</b></div>
-                    <div>{movieDisplayable?.duration}</div>
+                    <div>{utils.getDurationString(props.selectedMovie.duration)}</div>
                     <div><b>Actors</b></div>
-                    <div>{movieDisplayable?.actors.join(", ")}</div>
+                    <div>{props.selectedMovie.actors.join(", ")}</div>
                     <div><b>Created by</b></div>
-                    <div>{movieDisplayable?.username}</div>
+                    <div>{props.selectedMovie.username}</div>
                     <div className={styles.noWrap}><b>Average Note</b></div>
                     <div>
-                        <RatingStarsView value={movieDisplayable?.averageNote ?? 0}/>
+                        <RatingStarsView value={props.selectedMovie.averageNote}/>
                     </div>
                 </div>
                 <div className={styles.actionButtons}>
