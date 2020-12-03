@@ -6,10 +6,10 @@ import {getMainDefinition} from "@apollo/client/utilities";
 const BACKEND_SERVICE = "46.101.123.165";
 const BACKEND_LOCAL_SERVICE = "localhost";
 
-const httpLink = new HttpLink({uri: `http://${BACKEND_LOCAL_SERVICE}:3001/v1/graphql`});
+const httpLink = new HttpLink({uri: `http://${BACKEND_SERVICE}:3001/v1/graphql`});
 
 const wsLink = (authToken: string) => new WebSocketLink({
-    uri: `ws://${BACKEND_LOCAL_SERVICE}:3001/graphql`,
+    uri: `ws://${BACKEND_SERVICE}:3001/graphql`,
     options: {
         reconnect: true
     },
