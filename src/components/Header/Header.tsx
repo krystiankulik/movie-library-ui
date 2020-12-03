@@ -43,7 +43,7 @@ const Header = (props: Props) => {
 
     const renderSignInButton = () => props.loggedUser ? null :
         (<Button color="inherit" onClick={goToSignInView}>
-            Sing In
+            Sign In
         </Button>);
 
     const renderRegisterButton = () => props.loggedUser ? null :

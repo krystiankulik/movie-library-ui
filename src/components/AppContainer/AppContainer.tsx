@@ -46,7 +46,6 @@ export const AppContainer = () => {
     }
 
     useEffect(() => {
-        console.log(user.data);
         if (user.data) {
             subscribeToNewRatings();
         }
