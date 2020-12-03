@@ -22,4 +22,4 @@ docker-compose build
 docker-compose up
 ```
 
-Test app server by accessing `http://localhost:3000/`
+Test app server by accessing `http://localhost:80/`
