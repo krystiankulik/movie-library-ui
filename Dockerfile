@@ -4,4 +4,3 @@ COPY tsconfig.json package.json package-lock.json ./
 RUN npm ci --silent
 ADD . /usr/src/app
 CMD [ "npm", "start" ]
-EXPOSE 3300

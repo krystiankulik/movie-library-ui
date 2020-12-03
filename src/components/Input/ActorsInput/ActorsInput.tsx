@@ -55,6 +55,8 @@ export const ActorsInput = memo((props: Props) => {
                     }}
                 />
                 <div className={styles.addTooltip}>
+                    {/*Using the tooltip can cause findDOMNode deprecation error in the console.
+                     I would just wait for material-ui to make their components compatible with the newest React version.*/}
                     <Tooltip title="Add" aria-label="add" onClick={addNewActor}>
                         <Fab color="default">
                             <AddIcon/>

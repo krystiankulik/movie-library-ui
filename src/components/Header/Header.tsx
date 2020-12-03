@@ -1,6 +1,5 @@
 import React from "react";
 import {AppBar, Button, createStyles, makeStyles, Theme, Toolbar, Typography} from "@material-ui/core";
-import {useCurrentUserQuery} from "../../hooks/queries/useCurrentUserQuery";
 import {useHistory} from "react-router-dom";
 import {useLogout} from "../../hooks/useLogOut";
 import styles from "./Header.module.sass"
@@ -20,9 +19,12 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-const Header = () => {
+type Props = {
+    loggedUser?: string;
+}
+
+const Header = (props: Props) => {
     const classes = useStyles();
-    const currentUser = useCurrentUserQuery();
     const logout = useLogout();
     const history = useHistory();
 
@@ -31,35 +33,34 @@ const Header = () => {
     const goToRegisterView = () => history.push("/register");
     const goToAddMovieView = () => history.push("/add-movie")
 
-    const renderUserName = () => currentUser.data ? (
+    const renderUserName = () => props.loggedUser ? (
         <div className={styles.currentUsername}>
             <Typography variant="h6">
-                {currentUser.data.currentUser.username}
+                {props.loggedUser}
             </Typography>
         </div>
     ) : null
 
-    const renderSignInButton = () => currentUser.data ? null :
+    const renderSignInButton = () => props.loggedUser ? null :
         (<Button color="inherit" onClick={goToSignInView}>
             Sing In
         </Button>);
 
-    const renderRegisterButton = () => currentUser.data ? null :
+    const renderRegisterButton = () => props.loggedUser ? null :
         (<Button color="inherit" onClick={goToRegisterView}>
             Register
         </Button>);
 
     const logoutAndReturn = () => {
-        logout();
-        history.push("/");
+        logout().then(() => history.push("/"));
     }
 
-    const renderLogoutButton = () => currentUser.data ? (
+    const renderLogoutButton = () => props.loggedUser ? (
         <Button color="inherit" onClick={logoutAndReturn}>
             Log out
         </Button>) : null;
 
-    const renderAddMovieButton = () => currentUser.data ? (
+    const renderAddMovieButton = () => props.loggedUser ? (
         <Button color="inherit" onClick={goToAddMovieView}>
             Add movie
         </Button>
@@ -68,8 +69,8 @@ const Header = () => {
     return (
         <AppBar position="static" className={classes.header}>
             <Toolbar>
-                <div className={styles.homeButton}>
-                    <HomeIcon onClick={goToHomeView}/>
+                <div className={styles.homeButton} onClick={goToHomeView}>
+                    <HomeIcon/>
                 </div>
                 <div className={classes.space}/>
                 {renderUserName()}

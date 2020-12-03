@@ -6,7 +6,7 @@ export const useLogout = () => {
     const apolloClient = useApolloClient();
 
     return async () => {
-        await apolloClient.clearStore(); // we remove all information in the store
-        removeAuthToken(); //we clear the authToken
+        removeAuthToken();
+        await apolloClient.clearStore();
     };
 };

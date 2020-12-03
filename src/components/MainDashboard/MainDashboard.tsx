@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {Dispatch, SetStateAction, useEffect, useState} from "react";
 import {
     ColDef,
     DataGrid,
@@ -8,14 +8,15 @@ import {
     ValueFormatterParams
 } from '@material-ui/data-grid';
 import styles from "./MainDashboard.module.sass";
-import {makeStyles, useMediaQuery} from "@material-ui/core";
+import {useMediaQuery} from "@material-ui/core";
+import {makeStyles} from '@material-ui/styles';
 import {Link, useHistory} from "react-router-dom";
-import {useGetAllMoviesQuery} from "../../hooks/queries/useGetAllMoviesQuery";
-import {useCurrentUserQuery} from "../../hooks/queries/useCurrentUserQuery";
 import {utils} from "../../common/utils";
 import {RatingStarsView} from "../RatingStars/RatingStarsView";
 import {useSorting} from "../../hooks/useSorting";
 import dayjs from "dayjs";
+import {MovieInfo} from "../../apiSchema";
+import {MyMoviesToggle} from "../MyMoviesToggle/MyMoviesToggle";
 
 
 const columns: ColDef[] = [
@@ -62,7 +63,7 @@ const columns: ColDef[] = [
 const makeColumnsResponsive = (columns: ColDef[], bigScreen: boolean): ColDef[] => bigScreen ? columns.map(column => ({
     ...column,
     flex: 1,
-    cellClassName: 'cellStyle'
+    cellClassName: column.cellClassName ?? 'cellStyle'
 })) : columns;
 
 const useStyles = makeStyles({
@@ -72,26 +73,34 @@ const useStyles = makeStyles({
             cursor: "pointer"
         },
         '& .actorsCellStyle': {
+            cursor: "pointer",
             whiteSpace: "pre-wrap",
             overflow: "auto"
         }
     }
 });
 
-const MainDashboard = () => {
+
+type Props = {
+    movies: MovieInfo[];
+    loggedUser?: string;
+    showMyMovies: boolean;
+    setShowMyMovies: Dispatch<SetStateAction<boolean>>;
+}
+
+const MainDashboard = (props: Props) => {
     const classes = useStyles();
-    const {data, error} = useGetAllMoviesQuery();
     const bigScreen = useMediaQuery('(min-width:60rem)');
-    const currentUser = useCurrentUserQuery();
     const history = useHistory();
     const [column, direction, setSorting, removeSorting] = useSorting();
     const [sortModel, setSortModel] = useState<SortModel>([]);
+
 
     useEffect(() => {
         if (column && direction) {
             setSortModel([{field: column as string, sort: direction as SortDirection}])
         }
-    }, [column, direction])
+    }, [])
 
     const handleSortModelChange = (params: SortModelParams) => {
         if (params.sortModel !== sortModel) {
@@ -105,12 +114,8 @@ const MainDashboard = () => {
         }
     };
 
-    if (error) {
-        return <p>Error :(</p>;
-    }
 
-
-    const renderSignInHint = () => currentUser.data?.currentUser.username ? null :
+    const renderSignInHint = () => props.loggedUser ? null :
         (<div className={styles.infoDialog}>
             <Link to="/sign-in">Sing In</Link> to share and rate movies!
         </div>);
@@ -119,6 +124,12 @@ const MainDashboard = () => {
         history.push("/movies/" + movieId);
     }
 
+    const mapMoviesToDisplayRows = () => props.movies.map(movie => utils.mapMovieToDisplayRow(movie));
+
+    const getRows = () => props.showMyMovies && props.loggedUser ?
+        mapMoviesToDisplayRows().filter(movieRow => movieRow.username === props.loggedUser)
+        : mapMoviesToDisplayRows();
+
     return (
         <div className={styles.dashboardContainer}>
             <h1>Movie Library</h1>
@@ -126,7 +137,8 @@ const MainDashboard = () => {
                 {renderSignInHint()}
             </div>
             <div className={styles.dataGridContainer}>
-                <DataGrid rows={(data?.getAllMovies ?? []).map(movie => utils.mapMovieToDisplayRow(movie))}
+                {props.loggedUser && <MyMoviesToggle showMyMovies={props.showMyMovies} setShowMyMovies={props.setShowMyMovies}/>}
+                <DataGrid rows={getRows()}
                           columns={makeColumnsResponsive(columns, bigScreen)}
                           pageSize={10}
                           onSelectionChange={param => displayMovie(String(param.rowIds[0]))}

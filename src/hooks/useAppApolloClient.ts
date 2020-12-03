@@ -3,12 +3,13 @@ import {useAuthToken} from "./useAuthToken";
 import {WebSocketLink} from "@apollo/client/link/ws";
 import {getMainDefinition} from "@apollo/client/utilities";
 
+const BACKEND_SERVICE = "46.101.123.165";
+const BACKEND_LOCAL_SERVICE = "localhost";
 
-const BACKEND_SERVICE = "46.101.123.165:3001";
-const httpLink = new HttpLink({uri: `http://${BACKEND_SERVICE}/v1/graphql`});
+const httpLink = new HttpLink({uri: `http://${BACKEND_LOCAL_SERVICE}:3001/v1/graphql`});
 
 const wsLink = (authToken: string) => new WebSocketLink({
-    uri: `ws://${BACKEND_SERVICE}/graphql`,
+    uri: `ws://${BACKEND_LOCAL_SERVICE}:3001/graphql`,
     options: {
         reconnect: true
     },
@@ -36,15 +37,14 @@ const authMiddleware = (authToken: string) =>
                 },
             });
         }
-
         return forward(operation);
     });
 
 const cache = new InMemoryCache({
     typePolicies: {
-        Movie: {
+        Query: {
             fields: {
-                actors: {
+                getAllMovies: {
                     merge(existing, incoming) {
                         return incoming
                     }

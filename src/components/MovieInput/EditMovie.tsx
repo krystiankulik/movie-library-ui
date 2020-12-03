@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useCallback, useState} from "react";
 import styles from './MovieInput.module.sass'
 import {Button} from "@material-ui/core";
 import {useHistory} from "react-router-dom";
@@ -7,40 +7,27 @@ import {ActorsInput} from "../Input/ActorsInput/ActorsInput";
 import {ReleaseDateInput} from "../Input/ReleaseDateInput";
 import {MovieNameInput} from "../Input/MovieNameInput";
 import {useEditMovieMutation} from "../../hooks/mutations/useEditMovieMutation";
-import {useGetMovieQuery} from "../../hooks/queries/useGetMovieQuery";
 import dayjs, {Dayjs} from "dayjs";
 import {ErrorMessage} from "../ErrorMessage/ErrorMessage";
+import {MovieInfo} from "../../apiSchema";
 
 type Props = {
-    selectedMovieId: string;
+    selectedMovie: MovieInfo;
 }
 
 export const EditMovie = (props: Props) => {
-    const [, data] = useGetMovieQuery(props.selectedMovieId);
-    const isDataDefined = data === undefined;
-
-    const [name, setName] = useState<string>('');
-    const [date, setDate] = useState<Dayjs>(dayjs());
-    const [duration, setDuration] = useState<number | undefined>();
-    const [actors, setActors] = useState<string[]>([]);
+    const [name, setName] = useState<string>(props.selectedMovie.name);
+    const [date, setDate] = useState<Dayjs>(dayjs(props.selectedMovie.releaseDate));
+    const [duration, setDuration] = useState<number>(props.selectedMovie.duration);
+    const [actors, setActors] = useState<string[]>(props.selectedMovie.actors);
     const [editMovie] = useEditMovieMutation();
     const history = useHistory();
     const [errorMessages, setErrorMessages] = useState<string[]>([]);
     const handleActors = useCallback((actors) => setActors(actors), []);
     const handleDuration = useCallback((duration) => setDuration(duration), []);
 
-    useEffect(() => {
-        const movie = data?.getMovie;
-        if (movie && !isDataDefined) {
-            setName(movie.name);
-            setDuration(movie.duration);
-            setDate(dayjs(movie.releaseDate));
-            setActors(movie.actors);
-        }
-    }, [data?.getMovie, isDataDefined]);
-
     const backToMovieDetails = () =>
-        history.push("/movies/" + data?.getMovie?.id);
+        history.push("/movies/" + props.selectedMovie.id);
 
     const handleMovieEdit = () => {
         const errors = [];
@@ -56,7 +43,7 @@ export const EditMovie = (props: Props) => {
         if (errors.length > 0) {
             setErrorMessages(errors);
         } else {
-            editMovie(String(data?.getMovie?.id), name, date, duration ?? 0, actors)
+            editMovie(props.selectedMovie.id, name, date, duration ?? 0, actors)
                 .then(() => {
                     backToMovieDetails();
                 })
@@ -78,7 +65,7 @@ export const EditMovie = (props: Props) => {
                 </div>
                 <div className={styles.formItem}>
                     <div>
-                        {duration && <DurationInput duration={duration} setDuration={handleDuration}/>}
+                        <DurationInput duration={duration} setDuration={handleDuration}/>
                     </div>
                 </div>
                 <div className={styles.formItem}>

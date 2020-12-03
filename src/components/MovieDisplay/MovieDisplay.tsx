@@ -1,40 +1,27 @@
-import {useGetMovieQuery} from "../../hooks/queries/useGetMovieQuery";
-import ClientFaultPage from "../ClientFaultPage/ClientFaultPage";
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import styles from "./MovieDisplay.module.sass";
 import {utils} from "../../common/utils";
 import {RatingStarsView} from "../RatingStars/RatingStarsView";
-import {RatingInfo} from "../../apiSchema";
+import {MovieInfo, RatingInfo} from "../../apiSchema";
 import {Button, TextField} from "@material-ui/core";
 import {Rating} from "@material-ui/lab";
 import {useRateMovieMutation} from "../../hooks/mutations/useRateMovieMutation";
-import {useCurrentUserQuery} from "../../hooks/queries/useCurrentUserQuery";
 import {useHistory} from "react-router-dom";
 import {useDeleteMovieMutation} from "../../hooks/mutations/useDeleteMovieMutation";
 import dayjs from "dayjs";
 
 type Props = {
-    selectedMovieId: string;
+    selectedMovie: MovieInfo;
+    loggedUser?: string;
 }
 const MovieDisplay = (props: Props) => {
-    const [loading, data, subscribeToNewRatings] = useGetMovieQuery(props.selectedMovieId);
     const [comment, setComment] = useState<string>('')
     const [note, setNote] = useState<number | null>(2);
     const [rateMovie] = useRateMovieMutation();
     const [deleteMovie] = useDeleteMovieMutation();
-    const currentUser = useCurrentUserQuery();
     const history = useHistory();
 
-    useEffect(() => {
-        const unsubscribe = subscribeToNewRatings();
-        return () => unsubscribe();
-    }, [currentUser]);
-
-    if (!data?.getMovie && !loading) {
-        return <ClientFaultPage text="404 Not found"/>
-    }
-
-    const movieDisplayable = data?.getMovie ? utils.mapMovieToDisplayRow(data?.getMovie) : null;
+    const movieDisplayable = utils.mapMovieToDisplayRow(props.selectedMovie);
 
     const renderRating = (ratingInfo: RatingInfo) =>
         <div key={ratingInfo.username}>
@@ -58,17 +45,16 @@ const MovieDisplay = (props: Props) => {
 
     const handleMovieDelete = () => {
         deleteMovie(movieDisplayable?.id ?? '')
-            .then(() => history.push("/"))
             .catch(error => console.error(error.message));
-
+        history.push("/");
     }
 
 
     const renderRateInput = () => {
-        const movieAlreadyRated = (data?.getMovie?.ratings ?? [])
-            .filter(rating => rating.username === currentUser.data?.currentUser.username).length > 0
+        const movieAlreadyRated = props.selectedMovie.ratings
+            .filter(rating => rating.username === props.loggedUser).length > 0
 
-        if (movieAlreadyRated || !currentUser.data) {
+        if (movieAlreadyRated || !props.loggedUser) {
             return null;
         }
 
@@ -105,7 +91,7 @@ const MovieDisplay = (props: Props) => {
     }
 
     const renderEditButton = () => (
-        currentUser.data ? (
+        props.loggedUser === props.selectedMovie.username ? (
             <div className={styles.actionButton}>
                 <Button variant="outlined" color="default" size="small" onClick={editMovie}>
                     Edit
@@ -113,7 +99,7 @@ const MovieDisplay = (props: Props) => {
             </div>) : null
     );
     const renderDeleteButton = () =>
-        currentUser.data ? (
+        props.loggedUser === props.selectedMovie.username ? (
             <div className={styles.actionButton}>
                 <Button variant="outlined" color="secondary" size="small" onClick={handleMovieDelete}>
                     Delete
@@ -136,7 +122,7 @@ const MovieDisplay = (props: Props) => {
                     <div>{movieDisplayable?.actors.join(", ")}</div>
                     <div><b>Created by</b></div>
                     <div>{movieDisplayable?.username}</div>
-                    <div><b>Average Note</b></div>
+                    <div className={styles.noWrap}><b>Average Note</b></div>
                     <div>
                         <RatingStarsView value={movieDisplayable?.averageNote ?? 0}/>
                     </div>
@@ -149,7 +135,7 @@ const MovieDisplay = (props: Props) => {
             <h3>Comments</h3>
             {renderRateInput()}
             <div className={styles.comments}>
-                {(data?.getMovie?.ratings || []).map(rating => renderRating(rating))}
+                {props.selectedMovie.ratings.map(rating => renderRating(rating))}
             </div>
         </div>
     );
