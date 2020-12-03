@@ -4,7 +4,7 @@ import {MovieInfo} from "../../apiSchema";
 import {Dayjs} from "dayjs";
 import {utils} from "../../common/utils";
 
-export const addMovieMutationGQL = gql`
+const addMovieMutationGQL = gql`
     mutation addMovie($input: AddMovieInput!) {
         addMovie(input: $input) {
             id,
@@ -33,36 +33,7 @@ interface AddMovieInput {
 export const useAddMovieMutation = (): [(name: string, releaseDate: Dayjs, duration: number, actors: string[])
     => Promise<FetchResult>, MutationResult] => {
 
-    const [mutation, mutationResults] = useMutation<{ addMovie: MovieInfo }, { input: AddMovieInput }>(addMovieMutationGQL, {
-        update(cache, mutationResult) {
-            cache.modify({
-                fields: {
-                    getAllMovies(existingMovies: MovieInfo[] = []) {
-                        const newMovieRef = cache.writeFragment({
-                            data: mutationResult.data?.addMovie,
-                            fragment: gql`
-                                fragment NewMovie on Movie {
-                                    id,
-                                    name,
-                                    releaseDate,
-                                    duration,
-                                    actors,
-                                    username,
-                                    averageNote,
-                                    ratings {
-                                        username,
-                                        note,
-                                        comment
-                                    },
-                                }
-                            `
-                        })
-                        return [...existingMovies, newMovieRef]
-                    }
-                }
-            })
-        }
-    });
+    const [mutation, mutationResults] = useMutation<{ addMovie: MovieInfo }, { input: AddMovieInput }>(addMovieMutationGQL);
 
     const addMovie = (name: string, releaseDate: Dayjs, duration: number, actors: string[]) => {
         return mutation({

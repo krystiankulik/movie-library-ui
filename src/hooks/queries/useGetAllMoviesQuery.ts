@@ -64,39 +64,46 @@ interface SubscriptionResponse {
     movieAffected: {
         movieAdded?: MovieInfo;
         movieEdited?: MovieInfo;
-        movieDeleted?: String;
+        movieDeleted?: string;
     }
+}
+
+const handleMovieEdited = (movieEdited: MovieInfo, prevMovies: MovieInfo[]) => {
+    return prevMovies.map(movie => {
+        if (movie.id === movieEdited?.id) {
+            return {...movieEdited};
+        }
+        return movie;
+    })
+}
+
+const handleMovieAdded = (movieAdded: MovieInfo, prevMovies: MovieInfo[]) => [...prevMovies, {...movieAdded}]
+
+
+const handleMovieDeleted = (movieDeleted: string, prevMovies: MovieInfo[]): MovieInfo[] =>
+    prevMovies.filter(movie => movie.id !== movieDeleted);
+
+
+const handleSubscriptionPayload = (payload: SubscriptionResponse, prevMovies: MovieInfo[]): MovieInfo[] => {
+    if (payload.movieAffected.movieEdited) {
+        return handleMovieEdited(payload.movieAffected.movieEdited, prevMovies);
+    } else if (payload.movieAffected.movieAdded) {
+        return handleMovieAdded(payload.movieAffected.movieAdded, prevMovies);
+    } else if (payload.movieAffected.movieDeleted) {
+        return handleMovieDeleted(payload.movieAffected.movieDeleted, prevMovies)
+    }
+    return prevMovies;
 }
 
 export const useGetAllMoviesQuery = (): [GetAllMoviesResponse | undefined, any] => {
     const {data, subscribeToMore} = useQuery<GetAllMoviesResponse>(GET_ALL_ITEMS);
-    console.log(data)
     const subscribeToNewRatings = () =>
         subscribeToMore({
             document: MOVIE_SUBSCRIPTION,
             updateQuery: (prev, sub: { subscriptionData: { data: SubscriptionResponse } }) => {
                 if (!sub.subscriptionData.data) return prev;
-                const movieAffected = sub.subscriptionData.data.movieAffected;
-                let movies: MovieInfo[] = prev.getAllMovies;
-                if (movieAffected.movieEdited) {
-                    const movieEdited = movieAffected.movieEdited;
-                    movies = prev.getAllMovies.map(movie => {
-                        if (movie.id === movieEdited?.id) {
-                            return movieEdited;
-                        }
-                        return movie;
-                    })
-                } else if (movieAffected.movieAdded) {
-                    if(movies.filter(movie => movie.id !== movieAffected.movieAdded?.id).length === 0) {
-                        movies.push(movieAffected.movieAdded);
-                    }
-                } else if (movieAffected.movieDeleted) {
-                    console.log(movieAffected.movieDeleted)
-                    movies = prev.getAllMovies.filter(movie => movie.id !== movieAffected.movieDeleted)
-                }
-
                 return {
-                    getAllMovies: movies
+                    getAllMovies: handleSubscriptionPayload(sub.subscriptionData.data, prev.getAllMovies)
                 };
             }
         });
