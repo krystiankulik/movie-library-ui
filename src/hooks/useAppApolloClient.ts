@@ -3,13 +3,12 @@ import {useAuthToken} from "./useAuthToken";
 import {WebSocketLink} from "@apollo/client/link/ws";
 import {getMainDefinition} from "@apollo/client/utilities";
 
-const BACKEND_SERVICE = "46.101.123.165";
-const BACKEND_LOCAL_SERVICE = "localhost";
+const BACKEND_SERVICE = "move-api-56ce78545f8f.herokuapp.com";
 
-const httpLink = new HttpLink({uri: `http://${BACKEND_SERVICE}:3001/v1/graphql`});
+const httpLink = new HttpLink({uri: `https://${BACKEND_SERVICE}/v1/graphql`});
 
 const wsLink = (authToken: string) => new WebSocketLink({
-    uri: `ws://${BACKEND_SERVICE}:3001/graphql`,
+    uri: `ws://${BACKEND_SERVICE}/graphql`,
     options: {
         reconnect: true
     },

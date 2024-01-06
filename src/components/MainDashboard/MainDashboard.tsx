@@ -1,11 +1,10 @@
 import React, {Dispatch, SetStateAction, useEffect, useState} from "react";
 import {
-    ColDef,
     DataGrid,
-    SortDirection,
-    SortModel,
-    SortModelParams,
-    ValueFormatterParams
+    GridColDef,
+    GridSortDirection,
+    GridSortModel,
+    GridValueFormatterParams
 } from '@material-ui/data-grid';
 import styles from "./MainDashboard.module.sass";
 import {useMediaQuery} from "@material-ui/core";
@@ -19,7 +18,7 @@ import {MovieInfo} from "../../apiSchema";
 import {MyMoviesToggle} from "../MyMoviesToggle/MyMoviesToggle";
 
 
-const columns: ColDef[] = [
+const columns: GridColDef[] = [
     {
         field: 'name',
         headerName: 'Name',
@@ -55,14 +54,14 @@ const columns: ColDef[] = [
     {
         field: 'averageNote',
         headerName: 'Average Note',
-        renderCell: (params: ValueFormatterParams) => <RatingStarsView value={(Number(params.value))}/>,
+        renderCell: (params: GridValueFormatterParams) => <RatingStarsView value={(Number(params.value))}/>,
         sortable: true,
         type: "number",
         width: 150,
     },
 ];
 
-const makeColumnsResponsive = (columns: ColDef[], bigScreen: boolean): ColDef[] => bigScreen ? columns.map(column => ({
+const makeColumnsResponsive = (columns: GridColDef[], bigScreen: boolean): GridColDef[] => bigScreen ? columns.map(column => ({
     ...column,
     flex: 1,
     cellClassName: column.cellClassName ?? 'cellStyle'
@@ -95,19 +94,19 @@ const MainDashboard = (props: Props) => {
     const bigScreen = useMediaQuery('(min-width:60rem)');
     const history = useHistory();
     const [column, direction, setSorting, removeSorting] = useSorting();
-    const [sortModel, setSortModel] = useState<SortModel>([]);
+    const [sortModel, setSortModel] = useState<GridSortModel>([]);
 
 
     useEffect(() => {
         if (column && direction) {
-            setSortModel([{field: column as string, sort: direction as SortDirection}])
+            setSortModel([{field: column as string, sort: direction as GridSortDirection}])
         }
     }, [])
 
-    const handleSortModelChange = (params: SortModelParams) => {
-        if (params.sortModel !== sortModel) {
-            setSortModel(params.sortModel);
-            const newSortModel = params.sortModel[0];
+    const handleSortModelChange = (sortModelParam: GridSortModel) => {
+        if (sortModelParam !== sortModel) {
+            setSortModel(sortModelParam);
+            const newSortModel = sortModelParam[0];
             if (!newSortModel?.sort) {
                 removeSorting();
             } else {
@@ -143,7 +142,11 @@ const MainDashboard = (props: Props) => {
                 <DataGrid rows={getRows()}
                           columns={makeColumnsResponsive(columns, bigScreen)}
                           pageSize={10}
-                          onSelectionChange={param => displayMovie(String(param.rowIds[0]))}
+                          onSelectionModelChange={(newSelectionModel) => {
+                              if (newSelectionModel.length > 0) {
+                                  displayMovie(String(newSelectionModel[0]));
+                              }
+                          }}
                           className={classes.root}
                           sortModel={sortModel}
                           onSortModelChange={handleSortModelChange}
