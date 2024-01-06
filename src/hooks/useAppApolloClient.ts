@@ -8,7 +8,7 @@ const BACKEND_SERVICE = "move-api-56ce78545f8f.herokuapp.com";
 const httpLink = new HttpLink({uri: `https://${BACKEND_SERVICE}/v1/graphql`});
 
 const wsLink = (authToken: string) => new WebSocketLink({
-    uri: `ws://${BACKEND_SERVICE}/graphql`,
+    uri: `wss://${BACKEND_SERVICE}/graphql`,
     options: {
         reconnect: true
     },
