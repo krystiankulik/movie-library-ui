@@ -25,7 +25,7 @@ export const MyMoviesToggle = (props: Props) => (
     <div className={styles.toggleContainer}>
         <FormControlLabel
             control={<StyledSwitch checked={props.showMyMovies}
-                                   onChange={(event) => props.setShowMyMovies(event.target.checked)}
+                                   onChange={(event) => props.setShowMyMovies(!props.showMyMovies)}
                                    name="showMyMoviesToggle"
                                    color="primary"/>}
             label={<b>{"Show only my movies"}</b>}
