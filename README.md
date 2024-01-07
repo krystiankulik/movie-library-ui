@@ -1,25 +1,7 @@
-# Install movie-library-ui
+# Movie library UI
 
-React client app for gastromatic movie api
+Movie library is an application where users can share, rate and comment their movies.
 
-## Setup Without Docker
+This part of the application was written in React using also GraphQL Apollo Client for communicating with the backend.
 
-Node version 14 is needed to run the project
-
-```
-npm ci
-npm run start
-```
-
-Test running server by accessing `http://localhost:3000/`
-
-## Setup with Docker
-
-Docker and docker-compose need to be installed. To start the services run
-
-```
-docker-compose build
-docker-compose up
-```
-
-Test app server by accessing `http://localhost:80/`
+Demo:  [MovieLibrary](https://www.movielibrary.net)
